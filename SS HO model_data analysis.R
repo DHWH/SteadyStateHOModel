@@ -224,7 +224,7 @@ library(raster)
 
 # Read in temperature and humidity data (monthly climatologies), calculate growing season averages and convert to raster
 
-Tdata <- read.table("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/R code/grid_10min_tmp.dat")
+Tdata <- read.table("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code/grid_10min_tmp.dat")
 Temps <- Tdata[, c(3:14)]
 GSmeanT <- apply(Temps, 1, function(x) mean (x[x > 0]))
 Tdata <- cbind(Tdata[,c(1:2)], GSmeanT)
@@ -238,8 +238,8 @@ T_rast <- rasterize(T_spdf, T_rast_empty, T_spdf$Tdata.GSmeanT)
 T_rast[T_rast <= 0] <- NA
 
 
-Tdata <- read.table("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/R code/grid_10min_tmp.dat")
-Rhdata <- read.table("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/R code/grid_10min_reh.dat")
+Tdata <- read.table("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code/grid_10min_tmp.dat")
+Rhdata <- read.table("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code/grid_10min_reh.dat")
 Temps <- Tdata[, c(3:14)]
 Rhs <- Rhdata[, c(3:14)]
 Temps_pos <- replace(Temps, Temps <= 0, 0)
@@ -251,22 +251,22 @@ Rhdata <- cbind(Rhdata[,c(1:2)], GSmeanRh)
 colnames(Rhdata)[1:2] <- c("Lat", "Lon")
 Rhdata[is.na(Rhdata)] <- 0
 
-Rh_spdf <- SpatialPointsDataFrame(Rhdata[c("long", "lat")], data=data.frame(Rhdata$GSmeanRh), proj4string = CRS("+proj=longlat +datum=WGS84") )
+Rh_spdf <- SpatialPointsDataFrame(Rhdata[c("Lon", "Lat")], data=data.frame(Rhdata$GSmeanRh), proj4string = CRS("+proj=longlat +datum=WGS84") )
 
 Rh_rast_empty <- raster()
 Rh_rast <- rasterize(Rh_spdf, Rh_rast_empty, Rh_spdf$Rhdata.GSmeanRh)
 Rh_rast[Rh_rast <= 0] <- NA
 
 # Read in growing season precipitation H and O isotope data (waterisotopes.org, Bowen et al. 2005) 
-Hgs <- raster("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/R code/GSIsotopeMaps/Hgs.asc", gz=FALSE)
+Hgs <- raster("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code/GSIsotopeMaps/Hgs.asc", gz=FALSE)
 projection(Hgs) =  CRS("+proj=longlat +datum=WGS84")
 
-Ogs <- raster("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/R code/GSIsotopeMaps/Ogs.asc", gz=FALSE)
+Ogs <- raster("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code/GSIsotopeMaps/Ogs.asc", gz=FALSE)
 projection(Ogs) =  CRS("+proj=longlat +datum=WGS84")
 
 # Extract data for each point along transects in NA and EU  
-NA_transect <- readOGR(dsn="/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/R code", layer="NA_transect")
-EU_transect <- readOGR(dsn="/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/R code", layer="EU_transect")
+NA_transect <- readOGR(dsn="/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code", layer="NA_transect")
+EU_transect <- readOGR(dsn="/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code", layer="EU_transect")
  
 transectpoints <- spsample(NA_transect, 500, "regular")
 Tpoints <- extract(T_rast, transectpoints)
@@ -1011,84 +1011,84 @@ points(EU_pointdata$Lon, EU_pointdata$Lat, pch=16, col="blue", cex=0.5)
 dev.off() 
 
 # Fig. 4
-pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/Figures/Fig.4.pdf", height=6, width=8, encoding="WinAnsi.enc")
+pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/Figures/Fig.4.pdf", height=6, width=8, encoding="WinAnsi.enc")
 par(mfrow=c(1,2), oma=c(0,1.5,0,0), mgp=c(2.5,1,0), mar=c(5,4,2,2), las=1)
 
-plot(testNA.1$d2Hew, testNA.1$d2Hker, xlim=c(min(testNA.1$d2Hew, testEU.1$d2Hew)-1, max(testNA.1$d2Hew, testEU.1$d2Hew)+1), ylim=c(min(testNA.1$d2Hker, testEU.1$d2Hker)-1, max(testNA.1$d2Hker, testEU.1$d2Hker)+1), xlab=expression(paste(delta^{2}, "H (\u2030) Environmental water")), ylab=expression(paste(delta^{2}, "H (\u2030) Keratin")), cex.axis=0.8, pch=20, cex=0.8)	
-lines(testNA.1$d2Hew, fitted(lm(testNA.1$d2Hker ~ testNA.1$d2Hew)), lwd=1.5)
+plot(testNA.1$d2Hew, testNA.1$d2Hker, xlim=c(min(testNA.1$d2Hew, testEU.1$d2Hew)-1, max(testNA.1$d2Hew, testEU.1$d2Hew)+1), ylim=c(min(testNA.1$d2Hker, testEU.1$d2Hker)-1, max(testNA.1$d2Hker, testEU.1$d2Hker)+1), xlab=expression(paste("Env. water ", delta^{2}, "H (\u2030)")), ylab=expression(paste("Keratin ", delta^{2}, "H (\u2030)")), pch=1, cex.axis=0.75)	#cex=0.8
+lines(testNA.1$d2Hew, fitted(lm(testNA.1$d2Hker ~ testNA.1$d2Hew)), lwd=2)
 lm_mod = lm(testNA.1$d2Hker ~ testNA.1$d2Hew) 
 lm_coef = round(coef(lm_mod),2)
-lm_r2 = round(summary(lm_mod)$adj.r.squared,2) 
-text(-125,-60, "y = 1.03x - 35.91", pos=4, cex=0.8)
-text(-125,-63, expression(paste(R^{2}, " = 1.00")), pos=4, cex=0.8)
+lm_r2 = round(summary(lm_mod)$adj.r.squared,4)
+text(-125,-60, "y = 1.03x - 35.93", pos=4) #cex=0.8
+text(-125,-65, expression(paste(r^{2}, " = 0.9986")), pos=4) #cex=0.8
 # Empirical relationship - 
-text(-125,-68, expression(italic(paste("y = 1.07x + ", beta[1]))), pos=4, cex=0.8, font=3)
-text(-125,-71, expression(italic(paste(R^{2}, " = 0.86"))), pos=4, cex=0.8, font=3)
+text(-125,-70, expression(italic(paste("y = 1.07x + ", beta[1]))), pos=4, font=3) #cex=0.8
+text(-125,-75, expression(italic(paste(r^{2}, " = 0.86"))), pos=4, font=3) #cex=0.8
 
-points(testEU.1$d2Hew, testEU.1$d2Hker, col="blue", pch=20, cex=0.8)
-lines(testEU.1$d2Hew, fitted(lm(testEU.1$d2Hker ~ testEU.1$d2Hew)), col="blue", lwd=1.5)
+points(testEU.1$d2Hew, testEU.1$d2Hker, col="blue", pch=1)
+lines(testEU.1$d2Hew, fitted(lm(testEU.1$d2Hker ~ testEU.1$d2Hew)), col="blue", lwd=2)
 lm_mod = lm(testEU.1$d2Hker ~ testEU.1$d2Hew)
 lm_coef = round(coef(lm_mod),2)
-lm_r2 = round(summary(lm_mod)$adj.r.squared,2)
-text(-75,-153, "y = 1.23x - 26.18", pos=4, cex=0.8, col="blue")
-text(-75,-156, expression(paste(R^{2}, " = 0.90")), pos=4, cex=0.8, col="blue")
+lm_r2 = round(summary(lm_mod)$adj.r.squared,4)
+text(-80,-150, "y = 1.23x - 26.22", pos=4, col="blue")
+text(-80,-155, expression(paste(r^{2}, " = 0.9058")), pos=4, col="blue")
 # Empirical relationship - 
-text(-75,-161, "y = 1.28x - 7.2", pos=4, cex=0.8, col="blue", font=3)
-text(-75,-164, expression(italic(paste(R^{2}, " = 0.65"))), pos=4, cex=0.8, col="blue", font=3)
+text(-80,-160, "y = 1.28x - 7.20", pos=4, col="blue", font=3)
+text(-80,-165, expression(italic(paste(r^{2}, " = 0.65"))), pos=4, col="blue", font=3)
 
-plot(testNA.1$d18Oew, testNA.1$d18Oker, xlim=c(min(testNA.1$d18Oew, testEU.1$d18Oew)-1, max(testNA.1$d18Oew, testEU.1$d18Oew)+1), ylim=c(min(testNA.1$d18Oker, testEU.1$d18Oker)-1, max(testNA.1$d18Oker, testEU.1$d18Oker)+1), xlab=expression(paste(delta^{18}, "O (\u2030) Environmental water")), ylab=expression(paste(delta^{18}, "O (\u2030) Keratin")), cex.axis=0.8, pch=20, cex=0.8)	
-lines(testNA.1$d18Oew, fitted(lm(testNA.1$d18Oker ~ testNA.1$d18Oew)), lwd=1.5)
+plot(testNA.1$d18Oew, testNA.1$d18Oker, xlim=c(min(testNA.1$d18Oew, testEU.1$d18Oew)-1, max(testNA.1$d18Oew, testEU.1$d18Oew)+1), ylim=c(min(testNA.1$d18Oker, testEU.1$d18Oker)-1, max(testNA.1$d18Oker, testEU.1$d18Oker)+1), xlab=expression(paste("Env. water ", delta^{18}, "O (\u2030)")), ylab=expression(paste("Keratin ", delta^{18}, "O (\u2030)")), pch=1, cex.axis=0.75)
+lines(testNA.1$d18Oew, fitted(lm(testNA.1$d18Oker ~ testNA.1$d18Oew)), lwd=2)
 lm_mod = lm(testNA.1$d18Oker ~ testNA.1$d18Oew)
 lm_coef = round(coef(lm_mod),2)
-lm_r2 = round(summary(lm_mod)$adj.r.squared,2)
-text(-17.2,18.4, "y = 0.82x + 18.65", pos=4, cex=0.8)
-text(-17.2,18.0, expression(paste(R^{2}, " = 0.99")), pos=4, cex=0.8)
+lm_r2 = round(summary(lm_mod)$adj.r.squared,4)
+text(-17.0,18.2, "y = 0.82x + 18.64", pos=4)
+text(-17.0,17.5, expression(paste(r^{2}, " = 0.9871")), pos=4)
 
-points(testEU.1$d18Oew, testEU.1$d18Oker, col="blue", pch=20, cex=0.8)
-lines(testEU.1$d18Oew, fitted(lm(testEU.1$d18Oker ~ testEU.1$d18Oew)), col="blue", lwd=1.5)
+points(testEU.1$d18Oew, testEU.1$d18Oker, col="blue", pch=1)
+lines(testEU.1$d18Oew, fitted(lm(testEU.1$d18Oker ~ testEU.1$d18Oew)), col="blue", lwd=2)
 lm_mod = lm(testEU.1$d18Oker ~ testEU.1$d18Oew)
 lm_coef = round(coef(lm_mod),2)
-lm_r2 = round(summary(lm_mod)$adj.r.squared,2)
-text(-11,4.7, "y = 1.24x + 21.46", pos=4, cex=0.8, col="blue")
-text(-11,4.3, expression(paste(R^{2}, " = 0.59")), pos=4, cex=0.8, col="blue")
+lm_r2 = round(summary(lm_mod)$adj.r.squared,4)
+text(-11.0,5.0, "y = 1.24x + 21.46", pos=4, col="blue")
+text(-11.0,4.3, expression(paste(r^{2}, " = 0.5959")), pos=4, col="blue")
 
 dev.off()
 
 # Fig. S4 
-pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/Figures/Fig.S4.pdf", height=6, width=8, encoding="WinAnsi.enc")
+pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/Figures/Fig.S4.pdf", height=6, width=8, encoding="WinAnsi.enc")
 par(mfrow=c(1,2), oma=c(0,1.5,0,0), mgp=c(2.5,1,0), mar=c(5,4,2,2), las=1)
 
-plot(testNA.2$d2Hew, testNA.2$d2Hker, xlim=c(min(testNA.2$d2Hew, testEU.2$d2Hew)-1, max(testNA.2$d2Hew, testEU.2$d2Hew)+1), ylim=c(min(testNA.2$d2Hker, testEU.2$d2Hker)-1, max(testNA.2$d2Hker, testEU.2$d2Hker)+1), xlab=expression(paste(delta^{2}, "H (\u2030) Environmental water")), ylab=expression(paste(delta^{2}, "H (\u2030) Keratin")), cex.axis=0.8, pch=20, cex=0.8)	
-lines(testNA.2$d2Hew, fitted(lm(testNA.2$d2Hker ~ testNA.2$d2Hew)), lwd=1.5)
+plot(testNA.2$d2Hew, testNA.2$d2Hker, xlim=c(min(testNA.2$d2Hew, testEU.2$d2Hew)-1, max(testNA.2$d2Hew, testEU.2$d2Hew)+1), ylim=c(min(testNA.2$d2Hker, testEU.2$d2Hker)-1, max(testNA.2$d2Hker, testEU.2$d2Hker)+1), xlab=expression(paste("Env. water ", delta^{2}, "H (\u2030)")), ylab=expression(paste("Keratin ", delta^{2}, "H (\u2030)")), cex.axis=0.75, pch=1)	
+lines(testNA.2$d2Hew, fitted(lm(testNA.2$d2Hker ~ testNA.2$d2Hew)), lwd=2)
 lm_mod = lm(testNA.2$d2Hker ~ testNA.2$d2Hew)
 lm_coef = round(coef(lm_mod),2)
-lm_r2 = round(summary(lm_mod)$adj.r.squared,2) 
-text(-125,-43, "y = 1.02x - 22.63", pos=4, cex=0.8)
-text(-125,-46, expression(paste(R^{2}, " = 1.00")), pos=4, cex=0.8)
+lm_r2 = round(summary(lm_mod)$adj.r.squared,4) 
+text(-125,-45, "y = 1.02x - 22.63", pos=4)
+text(-125,-50, expression(paste(r^{2}, " = 0.9999")), pos=4)
 
-points(testEU.2$d2Hew, testEU.2$d2Hker, col="blue", pch=20, cex=0.8)
-lines(testEU.2$d2Hew, fitted(lm(testEU.2$d2Hker ~ testEU.2$d2Hew)), col="blue", lwd=1.5)
+points(testEU.2$d2Hew, testEU.2$d2Hker, col="blue", pch=1)
+lines(testEU.2$d2Hew, fitted(lm(testEU.2$d2Hker ~ testEU.2$d2Hew)), col="blue", lwd=2)
 lm_mod = lm(testEU.2$d2Hker ~ testEU.2$d2Hew)
 lm_coef = round(coef(lm_mod),2)
-lm_r2 = round(summary(lm_mod)$adj.r.squared,2)
-text(-75,-146, "y = 1.02x - 21.15", pos=4, cex=0.8, col="blue")
-text(-75,-149, expression(paste(R^{2}, " = 1.00")), pos=4, cex=0.8, col="blue")
+lm_r2 = round(summary(lm_mod)$adj.r.squared,4)
+text(-80,-143, "y = 1.02x - 21.14", pos=4, col="blue")
+text(-80,-148, expression(paste(r^{2}, " = 0.9962")), pos=4, col="blue")
 
-plot(testNA.2$d18Oew, testNA.2$d18Oker, xlim=c(min(testNA.2$d18Oew, testEU.2$d18Oew)-1, max(testNA.2$d18Oew, testEU.2$d18Oew)+1), ylim=c(min(testNA.2$d18Oker, testEU.2$d18Oker)-1, max(testNA.2$d18Oker, testEU.2$d18Oker)+1), xlab=expression(paste(delta^{18}, "O (\u2030) Environmental water")), ylab=expression(paste(delta^{18}, "O (\u2030) Keratin")), cex.axis=0.8, pch=20, cex=0.8)	
-lines(testNA.2$d18Oew, fitted(lm(testNA.2$d18Oker ~ testNA.2$d18Oew)), lwd=1.5)
+plot(testNA.2$d18Oew, testNA.2$d18Oker, xlim=c(min(testNA.2$d18Oew, testEU.2$d18Oew)-1, max(testNA.2$d18Oew, testEU.2$d18Oew)+1), ylim=c(min(testNA.2$d18Oker, testEU.2$d18Oker)-1, max(testNA.2$d18Oker, testEU.2$d18Oker)+1), xlab=expression(paste(delta^{18}, "O (\u2030) Environmental water")), ylab=expression(paste(delta^{18}, "O (\u2030) Keratin")), cex.axis=0.75, pch=1)	
+lines(testNA.2$d18Oew, fitted(lm(testNA.2$d18Oker ~ testNA.2$d18Oew)), lwd=2)
 lm_mod = lm(testNA.2$d18Oker ~ testNA.2$d18Oew)
 lm_coef = round(coef(lm_mod),2)
-lm_r2 = round(summary(lm_mod)$adj.r.squared,2) 
-text(-17,20.3, "y = 0.78x + 22.36", pos=4, cex=0.8)
-text(-17,19.95, expression(paste(R^{2}, " = 1.00")), pos=4, cex=0.8)
+lm_r2 = round(summary(lm_mod)$adj.r.squared,6) 
+text(-17,20.2, "y = 0.78x + 22.36", pos=4)
+text(-17,19.7, expression(paste(r^{2}, " = 0.9999")), pos=4)
 
-points(testEU.2$d18Oew, testEU.2$d18Oker, col="blue", pch=20, cex=0.8)
-lines(testEU.2$d18Oew, fitted(lm(testEU.2$d18Oker ~ testEU.2$d18Oew)), col="blue", lwd=1.5)
+points(testEU.2$d18Oew, testEU.2$d18Oker, col="blue", pch=1)
+lines(testEU.2$d18Oew, fitted(lm(testEU.2$d18Oker ~ testEU.2$d18Oew)), col="blue", lwd=2)
 lm_mod = lm(testEU.2$d18Oker ~ testEU.2$d18Oew)
 lm_coef = round(coef(lm_mod),2)
-lm_r2 = round(summary(lm_mod)$adj.r.squared,2) 
-text(-11,9.2, "y = 0.79x + 22.47", pos=4, cex=0.8, col="blue")
-text(-11,8.85, expression(paste(R^{2}, " = 1.00")), pos=4, cex=0.8, col="blue")
+lm_r2 = round(summary(lm_mod)$adj.r.squared,4) 
+text(-11.5,9.4, "y = 0.79x + 22.47", pos=4, col="blue")
+text(-11.5,8.9, expression(paste(r^{2}, " = 0.9982")), pos=4, col="blue")
 
 dev.off()
 
