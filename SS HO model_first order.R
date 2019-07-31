@@ -1,5 +1,5 @@
 
-# Magozzi et al. Oecologia
+# Magozzi et al. (2019) in review
 
 #-----------------------------------------------------------------------------#
 #                      SS HO MODEL - First-order parameters                   #
