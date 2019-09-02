@@ -1,5 +1,5 @@
 
-# Magozzi et al. (2019) in review
+# Magozzi et al. (2019) Oecologia
 
 #-----------------------------------------------------------------------------#
 #                          SS HO MODEL - Data analysis                        #
@@ -226,7 +226,7 @@ library(raster)
 
 # Read in temperature and humidity data (monthly climatologies), calculate growing season averages and convert to raster
 
-Tdata <- read.table("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code/grid_10min_tmp.dat")
+Tdata <- read.table("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/R code/grid_10min_tmp.dat")
 Temps <- Tdata[, c(3:14)]
 GSmeanT <- apply(Temps, 1, function(x) mean (x[x > 0]))
 Tdata <- cbind(Tdata[,c(1:2)], GSmeanT)
@@ -240,8 +240,8 @@ T_rast <- rasterize(T_spdf, T_rast_empty, T_spdf$Tdata.GSmeanT)
 T_rast[T_rast <= 0] <- NA
 
 
-Tdata <- read.table("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code/grid_10min_tmp.dat")
-Rhdata <- read.table("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code/grid_10min_reh.dat")
+Tdata <- read.table("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/R code/grid_10min_tmp.dat")
+Rhdata <- read.table("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/R code/grid_10min_reh.dat")
 Temps <- Tdata[, c(3:14)]
 Rhs <- Rhdata[, c(3:14)]
 Temps_pos <- replace(Temps, Temps <= 0, 0)
@@ -260,15 +260,15 @@ Rh_rast <- rasterize(Rh_spdf, Rh_rast_empty, Rh_spdf$Rhdata.GSmeanRh)
 Rh_rast[Rh_rast <= 0] <- NA
 
 # Read in growing season precipitation H and O isotope data (waterisotopes.org, Bowen et al. 2005) 
-Hgs <- raster("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code/GSIsotopeMaps/Hgs.asc", gz=FALSE)
+Hgs <- raster("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/R code/GSIsotopeMaps/Hgs.asc", gz=FALSE)
 projection(Hgs) =  CRS("+proj=longlat +datum=WGS84")
 
-Ogs <- raster("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code/GSIsotopeMaps/Ogs.asc", gz=FALSE)
+Ogs <- raster("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/R code/GSIsotopeMaps/Ogs.asc", gz=FALSE)
 projection(Ogs) =  CRS("+proj=longlat +datum=WGS84")
 
 # Extract data for each point along transects in NA and EU  
-NA_transect <- readOGR(dsn="/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code", layer="NA_transect")
-EU_transect <- readOGR(dsn="/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/R code", layer="EU_transect")
+NA_transect <- readOGR(dsn="/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/R code", layer="NA_transect")
+EU_transect <- readOGR(dsn="/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/R code", layer="EU_transect")
  
 transectpoints <- spsample(NA_transect, 500, "regular")
 Tpoints <- extract(T_rast, transectpoints)
@@ -715,10 +715,11 @@ d2Hf = testpFdw$d2Hf
 d18Of = testpFdw$d18Of
 d18Oo2 = testpFdw$d18Oo2 
 
-pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/Figures/Fig.1.pdf", height=6, width=8, encoding="WinAnsi.enc")
+pdf("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/Figures/Fig.1.pdf", height=6, width=8, encoding="WinAnsi.enc")
 par(mfrow=c(1,2), oma=c(0,1.5,0,0), mgp=c(2.5,1,0), mar=c(5,4,2,2), las=1)
 
-plot(pFdw, d2Hbw, ylim=round(c(min(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)-1, max(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)+1)), xlab="Prop. of water flux that comes from drinking", ylab=expression(paste(delta^{2}, "H (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8)
+plot(pFdw, d2Hbw, ylim=round(c(min(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)-1, max(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)+1)), xlab="Prop. of water flux that comes from drinking", ylab=expression(paste(delta^{2}, "H (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8, frame.plot=F)
+box(bty="l")
 text(min(pFdw)+0.01, max(d2Hbw)-18, "Body water", pos=4, col=bw_col, cex=0.8)
 
 points(pFdw, d2Hker, type="l", lty=1, lwd=2, col=ker_col)
@@ -733,7 +734,9 @@ text(min(pFdw)+0.01, min(d2Hleafw)+2, "Food water", pos=4, col=leafw_col, cex=0.
 abline(h=d2Hf, lty=2, col=f_col)
 text(min(pFdw)+0.01, min(d2Hf)-3, "Food", pos=4, col=f_col, cex=0.8)
 
-plot(pFdw, d18Obw, ylim=round(c(min(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)-1, max(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)+1)), xlab="Prop. of water flux that comes from drinking", ylab=expression(paste(delta^{18}, "O (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8)
+plot(pFdw, d18Obw, ylim=round(c(min(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)-1, max(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)+1)), xlab="Prop. of water flux that comes from drinking", ylab=expression(paste(delta^{18}, "O (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8, frame.plot=F)
+box(bty="l")
+
 text(min(pFdw)+0.01, max(d18Obw)-4, "Body water", pos=4, col=bw_col, cex=0.8)
 
 points(pFdw, d18Oker, type="l", lty=1, lwd=2, col=ker_col)
@@ -767,10 +770,11 @@ d2Hf = testPw$d2Hf
 d18Of = testPw$d18Of
 d18Oo2 = testPw$d18Oo2
 
-pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/Figures/Fig.2.pdf", height=6, width=8, encoding="WinAnsi.enc")
+pdf("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/Figures/Fig.2.pdf", height=6, width=8, encoding="WinAnsi.enc")
 par(mfrow=c(1,2), oma=c(0,1.5,0,0), mgp=c(2.5,1,0), mar=c(5,4,2,2), las=1)
 
-plot(Pw, d2Hbw, ylim=round(c(min(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)-1, max(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)+1)), xlab="Prop. of food mass that is water", ylab=expression(paste(delta^{2}, "H (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8)
+plot(Pw, d2Hbw, ylim=round(c(min(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)-1, max(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)+1)), xlab="Prop. of food mass that is water", ylab=expression(paste(delta^{2}, "H (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8, frame.plot=F)
+box(bty="l")
 text(min(Pw)+0.02, min(d2Hbw)-1, "Body water", pos=4, col=bw_col, cex=0.8)
 
 points(Pw, d2Hker, type="l", lty=1, lwd=2, col=ker_col)
@@ -785,7 +789,8 @@ text(min(Pw)+0.02, min(d2Hleafw)+2, "Food water", pos=4, col=leafw_col, cex=0.8)
 abline(h=d2Hf, lty=2, col=f_col)
 text(min(Pw)+0.02, min(d2Hf)+2, "Food", pos=4, col=f_col, cex=0.8)
 
-plot(Pw, d18Obw, ylim=round(c(min(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)-1, max(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)+1)), xlab="Prop. of food mass that is water", ylab=expression(paste(delta^{18}, "O (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8)
+plot(Pw, d18Obw, ylim=round(c(min(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)-1, max(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)+1)), xlab="Prop. of food mass that is water", ylab=expression(paste(delta^{18}, "O (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8, frame.plot=F)
+box(bty="l")
 text(min(Pw)+0.02, min(d18Obw)-1, "Body water", pos=4, col=bw_col, cex=0.8)
 
 points(Pw, d18Oker, type="l", lty=1, lwd=2, col=ker_col)
@@ -819,10 +824,11 @@ d2Hf = testFMR$d2Hf
 d18Of = testFMR$d18Of
 d18Oo2 = testFMR$d18Oo2
 
-pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/Figures/Fig.3.pdf", height=6, width=8, encoding="WinAnsi.enc")
+pdf("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/Figures/Fig.3.pdf", height=6, width=8, encoding="WinAnsi.enc")
 par(mfrow=c(1,2), oma=c(0,1.5,0,0), mgp=c(2.5,1,0), mar=c(5,4,2,2), las=1)
 
-plot(FMR, d2Hbw, ylim=round(c(min(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)-1, max(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)+1)), xlab=expression(paste("Field metabolic rate (mol O"[2]," d"^{-1},")")), ylab=expression(paste(delta^{2}, "H (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8)
+plot(FMR, d2Hbw, ylim=round(c(min(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)-1, max(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)+1)), xlab=expression(paste("Field metabolic rate (mol O"[2]," d"^{-1},")")), ylab=expression(paste(delta^{2}, "H (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8, frame.plot=F)
+box(bty="l")
 text(0.03, min(d2Hbw), "Body water", pos=4, col=bw_col, cex=0.8)
 
 points(FMR, d2Hker, type="l", lty=1, lwd=2, col=ker_col)
@@ -837,7 +843,8 @@ text(0.03, min(d2Hleafw)+2, "Food water", pos=4, col=leafw_col, cex=0.8)
 abline(h=d2Hf, lty=2, col=f_col)
 text(0.03, min(d2Hf)+2, "Food", pos=4, col=f_col, cex=0.8)
 
-plot(FMR, d18Obw, ylim=round(c(min(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)-1, max(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)+1)), xlab=expression(paste("Field metabolic rate (mol O"[2]," d"^{-1},")")), ylab=expression(paste(delta^{18}, "O (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8)
+plot(FMR, d18Obw, ylim=round(c(min(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)-1, max(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)+1)), xlab=expression(paste("Field metabolic rate (mol O"[2]," d"^{-1},")")), ylab=expression(paste(delta^{18}, "O (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8, frame.plot=F)
+box(bty="l")
 text(0.03, min(d18Obw), "Body water", pos=4, col=bw_col, cex=0.8)
 
 points(FMR, d18Oker, type="l", lty=1, lwd=2, col=ker_col)
@@ -880,10 +887,11 @@ d18Ocarb=testPs$d18Ocarb
 d18Oprot=testPs$d18Oprot
 d18Ofat=testPs$d18Ofat
 
-pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/Figures/Fig.S1.pdf", height=6, width=8, encoding="WinAnsi.enc")
+pdf("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/Figures/Fig.S1.pdf", height=6, width=8, encoding="WinAnsi.enc")
 par(mfrow=c(1,2), oma=c(0,1.5,0,0), mgp=c(2.5,1,0), mar=c(5,4,2,2), las=1)
 
-plot(Pcarb, d2Hbw, ylim=round(c(min(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf, d2Hcarb,d2Hprot,d2Hfat)-1, max(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf,d2Hcarb,d2Hprot,d2Hfat)+1)), xlab="Proportion of carbohydrate in diet", ylab=expression(paste(delta^{2}, "H (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8)
+plot(Pcarb, d2Hbw, ylim=round(c(min(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf, d2Hcarb,d2Hprot,d2Hfat)-1, max(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf,d2Hcarb,d2Hprot,d2Hfat)+1)), xlab="Proportion of carbohydrate in diet", ylab=expression(paste(delta^{2}, "H (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8, frame.plot=F)
+box(bty="l")
 text(min(Pcarb)+0.01, min(d2Hbw)-3, "Body water", pos=4, col=bw_col, cex=0.8)
 
 points(Pcarb, d2Hker, type="l", lty=1, lwd=2, col=ker_col)
@@ -905,7 +913,8 @@ text(0.5, min(d2Hprot)-3, "Protein", pos=4, col="chocolate", cex=0.5)
 abline(h=d2Hfat, lty=3, lwd=0.5, col="dark green")
 text(0.5, min(d2Hfat)-3, "Fat", pos=4, col="dark green", cex=0.5)
 
-plot(Pcarb, d18Obw, ylim=round(c(min(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2, d18Ocarb,d18Oprot,d18Ofat)-1, max(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2, d18Ocarb,d18Oprot,d18Ofat)+1)), xlab="Proportion of carbohydrate in diet", ylab=expression(paste(delta^{18}, "O (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8)
+plot(Pcarb, d18Obw, ylim=round(c(min(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2, d18Ocarb,d18Oprot,d18Ofat)-1, max(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2, d18Ocarb,d18Oprot,d18Ofat)+1)), xlab="Proportion of carbohydrate in diet", ylab=expression(paste(delta^{18}, "O (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8, frame.plot=F)
+box(bty="l")
 text(min(Pcarb)+0.01, min(d18Obw)-1, "Body water", pos=4, col=bw_col, cex=0.8)
 
 points(Pcarb, d18Oker, type="l", lty=1, lwd=2, col=ker_col)
@@ -946,10 +955,11 @@ d2Hf = testM$d2Hf
 d18Of = testM$d18Of
 d18Oo2 = testM$d18Oo2
 		
-pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/Figures/Fig.S2.pdf", height=6, width=8, encoding="WinAnsi.enc")
+pdf("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/Figures/Fig.S2.pdf", height=6, width=8, encoding="WinAnsi.enc")
 par(mfrow=c(1,2), oma=c(0,1.5,0,0), mgp=c(2.5,1,0), mar=c(5,4,2,2), las=1)
 
-plot(M, d2Hbw, ylim=round(c(min(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)-1, max(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)+1)), xlab="Body mass (g)", ylab=expression(paste(delta^{2}, "H (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8)
+plot(M, d2Hbw, ylim=round(c(min(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)-1, max(d2Hbw, d2Hker, d2Hew, d2Hleafw, d2Hf)+1)), xlab="Body mass (g)", ylab=expression(paste(delta^{2}, "H (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8, frame.plot=F)
+box(bty="l")
 text(min(M)+5, min(d2Hbw), "Body water", pos=4, col=bw_col, cex=0.8)
 
 points(M, d2Hker, type="l", lty=1, lwd=2, col=ker_col)
@@ -964,7 +974,8 @@ text(min(M)+5, min(d2Hleafw)-2, "Food water", pos=4, col=leafw_col, cex=0.8)
 abline(h=d2Hf, lty=2, col=f_col)
 text(min(M)+5, min(d2Hf)-2, "Food", pos=4, col=f_col, cex=0.8)
 
-plot(M, d18Obw, ylim=round(c(min(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)-1, max(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)+1)), xlab="Body mass (g)", ylab=expression(paste(delta^{18}, "O (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8)
+plot(M, d18Obw, ylim=round(c(min(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)-1, max(d18Obw, d18Oker, d18Oew, d18Oleafw, d18Of, d18Oo2)+1)), xlab="Body mass (g)", ylab=expression(paste(delta^{18}, "O (\u2030)")), type="l", lty=1, lwd=2, col=bw_col, cex.axis=0.8, frame.plot=F)
+box(bty="l")
 text(min(M)+5, min(d18Obw)-1, "Body water", pos=4, col=bw_col, cex=0.8)
 
 points(M, d18Oker, type="l", lty=1, lwd=2, col=ker_col)
@@ -985,7 +996,7 @@ text(min(M)+5, min(d18Oo2)-1, expression("Atmospheric O"[2]), pos=4, col=o2_col,
 dev.off()
 
 # Fig. S3 
-pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/Figures/Fig.S3.pdf", height=6, width=8, encoding="WinAnsi.enc")
+pdf("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/Figures/Fig.S3.pdf", height=6, width=8, encoding="WinAnsi.enc")
 
 raster <- Hgs
 
@@ -1013,10 +1024,11 @@ points(EU_pointdata$Lon, EU_pointdata$Lat, pch=16, col="blue", cex=0.5)
 dev.off() 
 
 # Fig. 4
-pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/Figures/Fig.4.pdf", height=6, width=8, encoding="WinAnsi.enc")
+pdf("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/Figures/Fig.4.pdf", height=6, width=8, encoding="WinAnsi.enc")
 par(mfrow=c(1,2), oma=c(0,1.5,0,0), mgp=c(2.5,1,0), mar=c(5,4,2,2), las=1)
 
-plot(testNA.1$d2Hew, testNA.1$d2Hker, xlim=c(min(testNA.1$d2Hew, testEU.1$d2Hew)-1, max(testNA.1$d2Hew, testEU.1$d2Hew)+1), ylim=c(min(testNA.1$d2Hker, testEU.1$d2Hker)-1, max(testNA.1$d2Hker, testEU.1$d2Hker)+1), xlab=expression(paste("Env. water ", delta^{2}, "H (\u2030)")), ylab=expression(paste("Keratin ", delta^{2}, "H (\u2030)")), pch=1, cex.axis=0.75)	#cex=0.8
+plot(testNA.1$d2Hew, testNA.1$d2Hker, xlim=c(min(testNA.1$d2Hew, testEU.1$d2Hew)-1, max(testNA.1$d2Hew, testEU.1$d2Hew)+1), ylim=c(min(testNA.1$d2Hker, testEU.1$d2Hker)-1, max(testNA.1$d2Hker, testEU.1$d2Hker)+1), xlab=expression(paste("Env. water ", delta^{2}, "H (\u2030)")), ylab=expression(paste("Keratin ", delta^{2}, "H (\u2030)")), pch=1, cex.axis=0.75, frame.plot=F)
+box(bty="l")
 lines(testNA.1$d2Hew, fitted(lm(testNA.1$d2Hker ~ testNA.1$d2Hew)), lwd=2)
 lm_mod = lm(testNA.1$d2Hker ~ testNA.1$d2Hew) 
 lm_coef = round(coef(lm_mod),2)
@@ -1038,7 +1050,8 @@ text(-80,-155, expression(paste(r^{2}, " = 0.9058")), pos=4, col="blue")
 text(-80,-160, "y = 1.28x - 7.20", pos=4, col="blue", font=3)
 text(-80,-165, expression(italic(paste(r^{2}, " = 0.65"))), pos=4, col="blue", font=3)
 
-plot(testNA.1$d18Oew, testNA.1$d18Oker, xlim=c(min(testNA.1$d18Oew, testEU.1$d18Oew)-1, max(testNA.1$d18Oew, testEU.1$d18Oew)+1), ylim=c(min(testNA.1$d18Oker, testEU.1$d18Oker)-1, max(testNA.1$d18Oker, testEU.1$d18Oker)+1), xlab=expression(paste("Env. water ", delta^{18}, "O (\u2030)")), ylab=expression(paste("Keratin ", delta^{18}, "O (\u2030)")), pch=1, cex.axis=0.75)
+plot(testNA.1$d18Oew, testNA.1$d18Oker, xlim=c(min(testNA.1$d18Oew, testEU.1$d18Oew)-1, max(testNA.1$d18Oew, testEU.1$d18Oew)+1), ylim=c(min(testNA.1$d18Oker, testEU.1$d18Oker)-1, max(testNA.1$d18Oker, testEU.1$d18Oker)+1), xlab=expression(paste("Env. water ", delta^{18}, "O (\u2030)")), ylab=expression(paste("Keratin ", delta^{18}, "O (\u2030)")), pch=1, cex.axis=0.75, frame.plot=F)
+box(bty="l")
 lines(testNA.1$d18Oew, fitted(lm(testNA.1$d18Oker ~ testNA.1$d18Oew)), lwd=2)
 lm_mod = lm(testNA.1$d18Oker ~ testNA.1$d18Oew)
 lm_coef = round(coef(lm_mod),2)
@@ -1057,10 +1070,11 @@ text(-11.0,4.3, expression(paste(r^{2}, " = 0.5959")), pos=4, col="blue")
 dev.off()
 
 # Fig. S4 
-pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms Oecologia/Figures/Fig.S4.pdf", height=6, width=8, encoding="WinAnsi.enc")
+pdf("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/Figures/Fig.S4.pdf", height=6, width=8, encoding="WinAnsi.enc")
 par(mfrow=c(1,2), oma=c(0,1.5,0,0), mgp=c(2.5,1,0), mar=c(5,4,2,2), las=1)
 
-plot(testNA.2$d2Hew, testNA.2$d2Hker, xlim=c(min(testNA.2$d2Hew, testEU.2$d2Hew)-1, max(testNA.2$d2Hew, testEU.2$d2Hew)+1), ylim=c(min(testNA.2$d2Hker, testEU.2$d2Hker)-1, max(testNA.2$d2Hker, testEU.2$d2Hker)+1), xlab=expression(paste("Env. water ", delta^{2}, "H (\u2030)")), ylab=expression(paste("Keratin ", delta^{2}, "H (\u2030)")), cex.axis=0.75, pch=1)	
+plot(testNA.2$d2Hew, testNA.2$d2Hker, xlim=c(min(testNA.2$d2Hew, testEU.2$d2Hew)-1, max(testNA.2$d2Hew, testEU.2$d2Hew)+1), ylim=c(min(testNA.2$d2Hker, testEU.2$d2Hker)-1, max(testNA.2$d2Hker, testEU.2$d2Hker)+1), xlab=expression(paste("Env. water ", delta^{2}, "H (\u2030)")), ylab=expression(paste("Keratin ", delta^{2}, "H (\u2030)")), cex.axis=0.75, pch=1, frame.plot=F)
+box(bty="l")	
 lines(testNA.2$d2Hew, fitted(lm(testNA.2$d2Hker ~ testNA.2$d2Hew)), lwd=2)
 lm_mod = lm(testNA.2$d2Hker ~ testNA.2$d2Hew)
 lm_coef = round(coef(lm_mod),2)
@@ -1076,7 +1090,8 @@ lm_r2 = round(summary(lm_mod)$adj.r.squared,4)
 text(-80,-143, "y = 1.02x - 21.14", pos=4, col="blue")
 text(-80,-148, expression(paste(r^{2}, " = 0.9962")), pos=4, col="blue")
 
-plot(testNA.2$d18Oew, testNA.2$d18Oker, xlim=c(min(testNA.2$d18Oew, testEU.2$d18Oew)-1, max(testNA.2$d18Oew, testEU.2$d18Oew)+1), ylim=c(min(testNA.2$d18Oker, testEU.2$d18Oker)-1, max(testNA.2$d18Oker, testEU.2$d18Oker)+1), xlab=expression(paste(delta^{18}, "O (\u2030) Environmental water")), ylab=expression(paste(delta^{18}, "O (\u2030) Keratin")), cex.axis=0.75, pch=1)	
+plot(testNA.2$d18Oew, testNA.2$d18Oker, xlim=c(min(testNA.2$d18Oew, testEU.2$d18Oew)-1, max(testNA.2$d18Oew, testEU.2$d18Oew)+1), ylim=c(min(testNA.2$d18Oker, testEU.2$d18Oker)-1, max(testNA.2$d18Oker, testEU.2$d18Oker)+1), xlab=expression(paste(delta^{18}, "O (\u2030) Environmental water")), ylab=expression(paste(delta^{18}, "O (\u2030) Keratin")), cex.axis=0.75, pch=1, frame.plot=F)
+box(bty="l")	
 lines(testNA.2$d18Oew, fitted(lm(testNA.2$d18Oker ~ testNA.2$d18Oew)), lwd=2)
 lm_mod = lm(testNA.2$d18Oker ~ testNA.2$d18Oew)
 lm_coef = round(coef(lm_mod),2)
@@ -1114,10 +1129,11 @@ d18Of = c(testTL1.2$d18Of, testTL2.2$d18Of, testTL3.2$d18Of, testTL4.2$d18Of)
 
 d18Oo2 = c(testTL1.2$d18Oo2, testTL2.2$d18Oo2, testTL3.2$d18Oo2, testTL4.2$d18Oo2)
 
-pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/Figures/Fig.5.pdf", height=6, width=8, encoding="WinAnsi.enc")
+pdf("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/Figures/Fig.5.pdf", height=6, width=8, encoding="WinAnsi.enc")
 par(mfrow=c(1,2), oma=c(0,1.5,0,0), mgp=c(2.5,1,0), mar=c(5,4,2,2), las=1)
 
-plot(TL, d2Hbw, xlim=c(0.5,4.5), ylim=c(min(d2Hbw,d2Hker,d2Hdw,d2Hfw,d2Hf)-1, max(d2Hbw,d2Hker,d2Hdw,d2Hfw,d2Hf)+1), xaxt="n", xlab="", ylab=expression(paste(delta^{2}, "H (\u2030)")), pch=16, col=bw_col, cex=1.5, cex.axis=0.8, type="b")
+plot(TL, d2Hbw, xlim=c(0.5,4.5), ylim=c(min(d2Hbw,d2Hker,d2Hdw,d2Hfw,d2Hf)-1, max(d2Hbw,d2Hker,d2Hdw,d2Hfw,d2Hf)+1), xaxt="n", xlab="", ylab=expression(paste(delta^{2}, "H (\u2030)")), pch=16, col=bw_col, cex=1.5, cex.axis=0.8, type="b", frame.plot=F)
+box(bty="l")
 text(0.2, min(d2Hbw)-3, "Body water", pos=4, col=bw_col, cex=0.8)
 axis(1, at=1:4, labels=c("TL 1","TL 2","TL 3","TL 4"), cex.axis=0.8)
 
@@ -1133,7 +1149,8 @@ text(0.2, max(d2Hfw)+3, "Food water", pos=4, col=leafw_col, cex=0.8)
 points(TL, d2Hf, pch=18, col=f_col, type="b")
 text(0.2, min(d2Hf)+3, "Food", pos=4, col=f_col, cex=0.8)
 
-plot(TL, d18Obw, xlim=c(0.5,4.5), ylim=c(min(d18Obw,d18Oker,d18Odw,d18Ofw,d18Of,d18Oo2)-1, max(d18Obw,d18Oker,d18Odw,d18Ofw,d18Of,d18Oo2)+1), xaxt="n", xlab="", ylab=expression(paste(delta^{18}, "O (\u2030)")), pch=16, col=bw_col, cex=1.5, cex.axis=0.8, type="b")
+plot(TL, d18Obw, xlim=c(0.5,4.5), ylim=c(min(d18Obw,d18Oker,d18Odw,d18Ofw,d18Of,d18Oo2)-1, max(d18Obw,d18Oker,d18Odw,d18Ofw,d18Of,d18Oo2)+1), xaxt="n", xlab="", ylab=expression(paste(delta^{18}, "O (\u2030)")), pch=16, col=bw_col, cex=1.5, cex.axis=0.8, type="b", frame.plot=F)
+box(bty="l")
 text(0.2, max(d18Obw)-5, "Body water", pos=4, col=bw_col, cex=0.8)
 axis(1, at=1:4, labels=c("TL 1","TL 2","TL 3","TL 4"), cex.axis=0.8)
 
@@ -1174,10 +1191,11 @@ d18Of = c(testTL1.1$d18Of, testTL2.1$d18Of, testTL3.1$d18Of, testTL4.1$d18Of)
 
 d18Oo2 = c(testTL1.1$d18Oo2, testTL2.1$d18Oo2, testTL3.1$d18Oo2, testTL4.1$d18Oo2)
 
-pdf("/Users/Sarah/Dropbox/SS HO model/SS HO model ms PNAS/Figures/Fig.S5.pdf", height=6, width=8, encoding="WinAnsi.enc")
+pdf("/Users/Sarah/Dropbox/Magozzi et al. 2019 Oecologia/Figures/Fig.S5.pdf", height=6, width=8, encoding="WinAnsi.enc")
 par(mfrow=c(1,2), oma=c(0,1.5,0,0), mgp=c(2.5,1,0), mar=c(5,4,2,2), las=1)
 
-plot(TL, d2Hbw, xlim=c(0.5,4.5), ylim=c(min(d2Hbw,d2Hker,d2Hdw,d2Hfw,d2Hf)-1, max(d2Hbw,d2Hker,d2Hdw,d2Hfw,d2Hf)+1), xaxt="n", xlab="", ylab=expression(paste(delta^{2}, "H (\u2030)")), pch=16, col=bw_col, cex=1.5, cex.axis=0.8, type="b")
+plot(TL, d2Hbw, xlim=c(0.5,4.5), ylim=c(min(d2Hbw,d2Hker,d2Hdw,d2Hfw,d2Hf)-1, max(d2Hbw,d2Hker,d2Hdw,d2Hfw,d2Hf)+1), xaxt="n", xlab="", ylab=expression(paste(delta^{2}, "H (\u2030)")), pch=16, col=bw_col, cex=1.5, cex.axis=0.8, type="b", frame.plot=F)
+box(bty="l")
 text(0.2, min(d2Hbw)-3, "Body water", pos=4, col=bw_col, cex=0.8)
 axis(1, at=1:4, labels=c("TL 1","TL 2","TL 3","TL 4"), cex.axis=0.8)
 
@@ -1193,7 +1211,8 @@ text(0.2, max(d2Hfw)+3, "Food water", pos=4, col=leafw_col, cex=0.8)
 points(TL, d2Hf, pch=18, col=f_col, type="b")
 text(0.2, min(d2Hf)+3, "Food", pos=4, col=f_col, cex=0.8)
 
-plot(TL, d18Obw, xlim=c(0.5,4.5), ylim=c(min(d18Obw,d18Oker,d18Odw,d18Ofw,d18Of,d18Oo2)-1, max(d18Obw,d18Oker,d18Odw,d18Ofw,d18Of,d18Oo2)+1), xaxt="n", xlab="", ylab=expression(paste(delta^{18}, "O (\u2030)")), pch=16, col=bw_col, cex=1.5, cex.axis=0.8, type="b")
+plot(TL, d18Obw, xlim=c(0.5,4.5), ylim=c(min(d18Obw,d18Oker,d18Odw,d18Ofw,d18Of,d18Oo2)-1, max(d18Obw,d18Oker,d18Odw,d18Ofw,d18Of,d18Oo2)+1), xaxt="n", xlab="", ylab=expression(paste(delta^{18}, "O (\u2030)")), pch=16, col=bw_col, cex=1.5, cex.axis=0.8, type="b", frame.plot=F)
+box(bty="l")
 text(0.2, max(d18Obw)-5, "Body water", pos=4, col=bw_col, cex=0.8)
 axis(1, at=1:4, labels=c("TL 1","TL 2","TL 3","TL 4"), cex.axis=0.8)
 
